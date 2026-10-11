@@ -348,8 +348,15 @@ body,button,a,input,textarea,.brand,.eyebrow,.kicker,.pill,.small-btn,.top-label
 .author-portrait img{width:112px;height:132px;object-fit:cover;border-radius:10px}
 .author-portrait figcaption{color:var(--deep);font:20px/1.2 'Playfair Display',Georgia,serif}
 .author-portrait small{display:block;margin-top:7px;color:#65736b;font:11px/1.4 Arial,sans-serif}
+.side-stack{align-content:start}
+.related-reading{position:relative;z-index:1;margin:22px 0 8px}
+.related-reading-heading h2{margin:7px 0 0;color:var(--deep);font:clamp(24px,3vw,34px)/1.15 'Playfair Display',Georgia,serif}
+.related-reading-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}
+.related-reading .related-post{min-width:0;display:block;padding:18px 0;border:0;border-top:1px solid color-mix(in srgb,var(--tone),transparent 65%);border-radius:0;background:transparent;box-shadow:none}
+.related-reading .related-post h3{margin:8px 0;font-size:22px}
+.related-reading .related-post p{max-width:58ch}
 @media(max-width:1020px){.photo-story-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:700px){.photo-story{padding:24px 0}.photo-story-head{display:block}.photo-story-grid{grid-template-columns:1fr}.photo-story img{height:auto;max-height:360px;aspect-ratio:1.35/1}.photo-story figure.cover-photo-card img{aspect-ratio:2/3}.author-portrait{grid-template-columns:92px 1fr}.author-portrait img{width:92px;height:112px}.feature-copy{padding:12px 0 22px}}
+@media(max-width:700px){.photo-story{padding:24px 0}.photo-story-head{display:block}.photo-story-grid{grid-template-columns:1fr}.photo-story img{height:auto;max-height:360px;aspect-ratio:1.35/1}.photo-story figure.cover-photo-card img{aspect-ratio:2/3}.author-portrait{grid-template-columns:92px 1fr}.author-portrait img{width:92px;height:112px}.feature-copy{padding:12px 0 22px}.related-reading{margin-top:14px}.related-reading-grid{grid-template-columns:1fr;gap:8px}.related-reading .related-post{padding:15px 0}.related-reading .related-post h3{font-size:20px}}
 
 /* Melhor enquadramento para autoria, reportagem e respostas de leitura. */
 .intro-layout{gap:5px}
@@ -606,9 +613,13 @@ function renderSite(){
            <div><strong>Foco</strong><span>${b.label}</span></div>
          </div>
        </div>
-        ${posts.slice(1,3).map((post,i)=>`<article class="related-post"><div><span class="issue-kicker">${post.category}</span><h3>${post.title}</h3><p>${post.excerpt}</p><button class="post-open" data-post="${i+1}">Abrir artigo ↗</button></div></article>`).join('')}
      </aside>
    </section>
+
+    <section class="related-reading" aria-label="Outros artigos desta leitura">
+      <div class="related-reading-heading"><span class="issue-kicker">Mais leituras</span><h2>Outros olhares sobre a obra</h2></div>
+      <div class="related-reading-grid">${posts.slice(1,3).map((post,i)=>`<article class="related-post"><span class="issue-kicker">${post.category}</span><h3>${post.title}</h3><p>${post.excerpt}</p><button class="post-open" data-post="${i+1}">Abrir artigo ↗</button></article>`).join('')}</div>
+    </section>
 
      ${renderPhotoStory(b.theme,b)}
 
