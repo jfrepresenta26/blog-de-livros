@@ -1,0 +1,15 @@
+Banco de imagens do blog Entrelinhas
+Capas, retratos e imagens editoriais foram baixados de fontes de editoras para acompanhar o HTML como arquivos locais.
+
+- conceicao-evaristo.png: Conceição Evaristo durante debate no Festival Latinidades (2013), foto de Fora do Eixo, Wikimedia Commons, licença CC BY-SA 2.0. https://commons.wikimedia.org/wiki/File:ConceicaoEvaristo.jpg
+- cortella-retrato.webp: retrato de Mario Sergio Cortella, crédito Nana Higa, publicado pela Editora Planeta.
+- allan-dias-castro.png: retrato publicado pela Editora Sextante.
+- monja-coen.png: retrato da Monja Coen, fonte oficial da autora.
+- ferrovia-arquivo.jpg: Duas locomotivas da EF Vitória a Minas, 12 dez. 1968. Domínio público; atribuição: Acervo Arquivo Nacional / Fundo Correio da Manhã. https://commons.wikimedia.org/wiki/File:Krauss-Maffei_ML4000_C-C_-_EF_Vit%C3%B3ria_a_Minas_(1968).jpg
+- cortella-imagem-editorial.webp: imagem editorial adicional da Editora Planeta.
+- monja-poeta-pagina-01.png e monja-poeta-pagina-02.png: imagens editoriais da Editora Sextante.
+- capa-0.webp, capa-1.webp e capa-2.webp: capas correspondentes aos três livros apresentados no HTML.
+
+Fontes editoriais: https://pallaseditora.com.br/produto/cancao-para-ninar-menino-grande/
+https://www.planetadelivros.com.br/livro-por-que-fazemos-o-que-fazemos/220110
+https://sextante.com.br/products/a-monja-e-o-poeta
