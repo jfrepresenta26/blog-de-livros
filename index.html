@@ -378,6 +378,17 @@ body,button,a,input,textarea,.brand,.eyebrow,.kicker,.pill,.small-btn,.top-label
 @media(max-width:700px){.intro{display:flex;flex-direction:column;justify-content:flex-start;height:auto;min-height:100svh;min-height:100dvh;overflow:hidden}.intro-layout{height:auto;min-height:0;flex:1;justify-content:center;padding:calc(clamp(78px,10svh,108px) + env(safe-area-inset-top)) 12px 8px;gap:2px}.intro-title{max-width:16ch;font-size:clamp(25px,7vw,32px);line-height:1.08;margin:10px 0 8px}.intro-sub{max-width:42ch;font-size:clamp(11px,3.5vw,13px);line-height:1.45}.creator-credit{max-width:46ch;font-size:11px!important;margin:10px 10px 8px!important}.shelf{width:100%;height:clamp(210px,38svh,310px);min-height:210px;max-height:none;flex:0 0 auto}.choice{width:clamp(128px,min(42vw,26svh),200px)}.choice-caption{height:54px}.choice-caption strong{padding:0 6px;font-size:clamp(16px,4.7vw,20px);line-height:1.2}.choice-caption span{font-size:11px}.navigation{height:44px;margin-top:0}.round{width:44px;height:44px}.entry{position:relative;left:auto;bottom:auto;transform:none;max-width:90%;margin:0 auto calc(12px + env(safe-area-inset-bottom));gap:5px;white-space:normal;text-align:center;letter-spacing:1.3px}.entry .mouse{width:21px;height:32px;padding:0 0 3px;border-radius:6px;place-items:end center}.entry .mouse:after{width:7px;height:2px;animation:none}.entry-desktop{display:none}.entry-mobile{display:inline}.entry>span:last-child{font-size:17px!important}}
 @media(max-width:700px) and (max-height:700px){.intro-layout{padding-top:calc(68px + env(safe-area-inset-top))}.eyebrow{font-size:9px}.intro-title{font-size:25px}.intro-sub{font-size:11px}.creator-credit{margin-top:6px!important;margin-bottom:4px!important}.shelf{height:clamp(190px,34svh,235px);min-height:190px}.choice{width:clamp(124px,min(39vw,23svh),170px)}.choice-caption{height:48px}.navigation{height:40px}.entry{font-size:8px;margin-bottom:calc(8px + env(safe-area-inset-bottom))}}
 @media(orientation:landscape) and (max-height:500px){.intro-layout{padding-top:calc(58px + env(safe-area-inset-top))}.eyebrow,.intro-sub,.creator-credit{display:none}.shelf{height:54svh;min-height:160px;max-height:230px}.choice{width:clamp(108px,28vh,150px)}.choice-caption{height:38px}.choice-caption strong{font-size:15px}.choice-caption span{font-size:10px}.navigation{height:36px}.entry{font-size:8px;margin-bottom:calc(3px + env(safe-area-inset-bottom))}.intro-title{margin:4px 0;font-size:24px}}
+.reading-facts{grid-template-columns:1fr}
+.reading-facts div{border-left:3px solid var(--tone);border-radius:8px}
+.reading-facts span{font-weight:500}
+.feature-copy .issue-kicker{margin-bottom:6px}
+.feature-copy p{max-width:64ch}
+.related-reading-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.related-reading .related-post{padding:18px 14px;border:1px solid color-mix(in srgb,var(--tone),transparent 78%);border-radius:8px;background:rgba(255,255,255,.62)}
+.related-reading .related-post p{max-width:none}
+.reading-conclusion{padding:22px!important}
+@media(max-width:1020px){.related-reading-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.related-reading-grid{grid-template-columns:1fr}.related-reading .related-post{padding:16px 0;border:0;border-top:1px solid color-mix(in srgb,var(--tone),transparent 65%);border-radius:0;background:transparent}}
 
 </style>
 </head>
@@ -503,7 +514,7 @@ const visualNoteArt=[
   ]
  ];
  function renderPhotoStory(theme,book){
-  const items=photoStories[theme].map(item=>{const photo=item.cover?{src:book.coverImage,alt:`Capa de ${book.title}`}:item.author?photoFor(item.author):item;const src=photo&&photo.src||item.src;const alt=photo&&photo.alt||item.alt||item.title;return `<figure class="${item.cover?'cover-photo-card':''}"><a href="${item.href}" target="_blank" rel="noopener noreferrer"><img src="${src}" alt="${alt}" loading="lazy"></a><figcaption>${item.title}<small class="photo-credit">${item.credit}</small></figcaption></figure>`}).join('');
+  const items=photoStories[theme].filter(item=>!item.cover&&!item.author).map(item=>`<figure><a href="${item.href}" target="_blank" rel="noopener noreferrer"><img src="${item.src}" alt="${item.alt}" loading="lazy"></a><figcaption>${item.title}<small class="photo-credit">${item.credit}</small></figcaption></figure>`).join('');
   return `<section class="photo-story" aria-label="Fotografias e imagens editoriais do livro"><div class="photo-story-head"><div><span>Imagens documentais e editoriais</span><h2>O livro, seus autores e seu contexto</h2></div><span>Fontes: editoras e acervos identificados</span></div><div class="photo-story-grid">${items}</div></section>`;
  }
 const intro=document.getElementById('intro'),site=document.getElementById('site'),shelf=document.getElementById('shelf');let selected=1,entered=false,animating=false,lastWheel=0,touchStart=null;
@@ -562,8 +573,13 @@ function returnHome(){
  setTimeout(()=>{intro.classList.remove('returning');animating=false},reduced?90:2700);
 }
 const editorialPosts=[[{"category": "A obra", "title": "Fio Jasmim e as relações que atravessam a narrativa", "excerpt": "Uma leitura das relações afetivas e dos encontros que estruturam o romance.", "paragraphs": ["Ao acompanhar Fio Jasmim, o romance convida o leitor a observar como escolhas individuais repercutem na vida de outras pessoas. A narrativa abre espaço para diferentes experiências femininas e para as tensões entre desejo, responsabilidade e afeto.", "Mais do que resumir uma trajetória, a obra permite discutir a maneira como identidades e relações se constroem socialmente."], "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5MDAgNTUwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgyPSIxIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iIzQxMmMyYSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2FmNzU1MyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSI5MDAiIGhlaWdodD0iNTUwIiBmaWxsPSJ1cmwoI2cpIi8+PGNpcmNsZSBjeD0iNzQ1IiBjeT0iMTM1IiByPSIxNjQiIGZpbGw9IiNlM2I4ODciIG9wYWNpdHk9Ii4xOSIvPjxwYXRoIGQ9Ik0tNzAgNDUwIFEyODAgMTYwIDk4MCA0MTUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2VjZDJiMSIgc3Ryb2tlLXdpZHRoPSI1IiBvcGFjaXR5PSIuNjUiLz48cGF0aCBkPSJNLTcwIDQ5MCBRMjgwIDIwMCA5ODAgNDU1IiBmaWxsPSJub25lIiBzdHJva2U9IiNlY2QyYjEiIHN0cm9rZS13aWR0aD0iNSIgb3BhY2l0eT0iLjQiLz48ZyBmaWxsPSIjZWVkOGJkIiBvcGFjaXR5PSIuNDgiPjxyZWN0IHg9IjE1NCIgeT0iMTkwIiB3aWR0aD0iMTIiIGhlaWdodD0iMjYwIiByeD0iNSIvPjxyZWN0IHg9IjI1MyIgeT0iMTQ2IiB3aWR0aD0iMTIiIGhlaWdodD0iMjU1IiByeD0iNSIvPjxyZWN0IHg9IjM1MiIgeT0iMTcyIiB3aWR0aD0iMTIiIGhlaWdodD0iMjUwIiByeD0iNSIvPjwvZz48cGF0aCBkPSJNNTE1IDUwNXEtNzUtMTU1LTQtMjYwIDY1LTk0IDE0NC00MyA3OSA2MCAzMyAxNTgtNDAgODEtMTczIDE0NSIgZmlsbD0iI2QyYTE4NCIgb3BhY2l0eT0iLjQ3Ii8+PGNpcmNsZSBjeD0iNTk2IiBjeT0iMjA1IiByPSI2NyIgZmlsbD0iI2YwY2NhYSIgb3BhY2l0eT0iLjUyIi8+PC9zdmc+", "read": "4 min de leitura"}, {"category": "A autora", "title": "Conceição Evaristo: literatura, memória e voz", "excerpt": "Conheça a trajetória literária e o conceito de escrevivência.", "paragraphs": ["Conceição Evaristo é uma das vozes importantes da literatura brasileira contemporânea. Em seus textos, memória, experiência e crítica social caminham juntas, valorizando perspectivas muitas vezes afastadas do centro das narrativas.", "A escrevivência ajuda a compreender a força de uma literatura que dialoga com vidas individuais e memórias coletivas."], "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5MDAgNTUwIj48cmVjdCB3aWR0aD0iOTAwIiBoZWlnaHQ9IjU1MCIgZmlsbD0iI2M0OWE4MSIvPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSI5MDAiIGhlaWdodD0iNTUwIiBmaWxsPSIjNmUzZjNhIiBvcGFjaXR5PSIuNDUiLz48ZyBmaWxsPSJub25lIiBzdHJva2U9IiNmNGUxY2UiIHN0cm9rZS13aWR0aD0iMyIgb3BhY2l0eT0iLjQ4Ij48cGF0aCBkPSJNMTIwIDE0MFEzMjAgMjggNTUwIDE4MFQ5ODAgMTMwIi8+PHBhdGggZD0iTTEwMCAyNDBRMzEwIDEyOCA1NjAgMjcwVDk2MCAyNDAiLz48cGF0aCBkPSJNMTAwIDM0MFEzMTAgMjI4IDU2MCAzNzBUOTYwIDM0MCIvPjwvZz48Y2lyY2xlIGN4PSI0MzAiIGN5PSIzMTAiIHI9IjE1MCIgZmlsbD0iI2RhYmNhYSIgb3BhY2l0eT0iLjQyIi8+PHBhdGggZD0iTTM3MCA0NjVxLTEyMC0yMzAgMC0yOTAgMTAwLTYwIDE1NSAyMCA2MCA4MC0xOCAxODhsLTQyIDgyeiIgZmlsbD0iIzUxMmQzMSIgb3BhY2l0eT0iLjcyIi8+PC9zdmc+", "read": "4 min de leitura"}, {"category": "Reflexão", "title": "Afeto, gênero e identidade: o que o livro provoca?", "excerpt": "Três caminhos para refletir depois da leitura.", "paragraphs": ["Ao ler a obra, vale observar como os personagens percebem a si mesmos, como enxergam o outro e que expectativas atravessam suas relações. Questões sobre masculinidade, racismo e autonomia tornam a narrativa especialmente fértil para debate.", "Uma boa discussão começa quando perguntamos de quem é a voz que conta a história e quem sofre as consequências dos acontecimentos."], "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5MDAgNTUwIj48cmVjdCB3aWR0aD0iOTAwIiBoZWlnaHQ9IjU1MCIgZmlsbD0iIzYwNDQzYiIvPjxwYXRoIGQ9Ik0xMzAgMTEwaDYwMHYzMzBIMTMweiIgZmlsbD0iI2UyYzlhNyIgcng9IjEyIi8+PGcgZmlsbD0iIzdiNTE0NSIgb3BhY2l0eT0iLjY1Ij48cmVjdCB4PSIxOTAiIHk9IjE2NCIgd2lkdGg9IjM3MCIgaGVpZ2h0PSI3IiByeD0iMyIvPjxyZWN0IHg9IjE5MCIgeT0iMjAyIiB3aWR0aD0iNDgwIiBoZWlnaHQ9IjciIHJ4PSIzIi8+PHJlY3QgeD0iMTkwIiB5PSIyNDAiIHdpZHRoPSIzNTAiIGhlaWdodD0iNyIgcng9IjMiLz48cmVjdCB4PSIxOTAiIHk9IjI3OCIgd2lkdGg9IjQzMCIgaGVpZ2h0PSI3IiByeD0iMyIvPjxyZWN0IHg9IjE5MCIgeT0iMzE2IiB3aWR0aD0iMjcwIiBoZWlnaHQ9IjciIHJ4PSIzIi8+PHJlY3QgeD0iMTkwIiB5PSIzNTQiIHdpZHRoPSIzOTAiIGhlaWdodD0iNyIgcng9IjMiLz48L2c+PHBhdGggZD0iTTcwNSA4NUw0OTAgNDUwIiBzdHJva2U9IiNmOGU2YzkiIHN0cm9rZS13aWR0aD0iMjAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik03MDUgODVMNDkwIDQ1MCIgc3Ryb2tlPSIjODQ2MDNlIiBzdHJva2Utd2lkdGg9IjQiLz48L3N2Zz4=", "read": "4 min de leitura"}], [{"category": "A obra", "title": "Propósito: o que faz nosso trabalho ter sentido?", "excerpt": "O tema central do livro de Mario Sergio Cortella, explicado de forma acessível.", "paragraphs": ["O livro provoca uma pergunta que parece simples: por que dedicamos parte tão grande do nosso tempo ao que fazemos? Cortella conecta trabalho, realização e escolhas pessoais, defendendo uma postura mais consciente diante da rotina.", "Ter propósito não elimina desafios, mas pode ajudar a compreender a importância do esforço e dos objetivos."], "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5MDAgNTUwIj48cmVjdCB3aWR0aD0iOTAwIiBoZWlnaHQ9IjU1MCIgZmlsbD0iIzE3M2U1MSIvPjxjaXJjbGUgY3g9IjY4MCIgY3k9IjI1NSIgcj0iMjA1IiBmaWxsPSIjZThiYTJjIi8+PGNpcmNsZSBjeD0iNjgwIiBjeT0iMjU1IiByPSIxNTgiIGZpbGw9IiMxNzNlNTEiLz48ZyBmaWxsPSJub25lIiBzdHJva2U9IiNlOWMzNDkiIHN0cm9rZS13aWR0aD0iMyIgb3BhY2l0eT0iLjM1Ij48Y2lyY2xlIGN4PSIzMTAiIGN5PSIyNzUiIHI9IjIwNSIvPjxjaXJjbGUgY3g9IjMxMCIgY3k9IjI3NSIgcj0iMTQ1Ii8+PGNpcmNsZSBjeD0iMzEwIiBjeT0iMjc1IiByPSI4NSIvPjwvZz48cGF0aCBkPSJNMjIwIDM0MFYyMDVxMC02NSA4Mi02NSA3NiAwIDc2IDY5IDAgNTEtNzIgNzZsLTggMzkiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y2ZGI3MiIgc3Ryb2tlLXdpZHRoPSI0NSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PGNpcmNsZSBjeD0iMzAzIiBjeT0iMzkwIiByPSIyMiIgZmlsbD0iI2Y2ZGI3MiIvPjwvc3ZnPg==", "read": "4 min de leitura"}, {"category": "O autor", "title": "Mario Sergio Cortella e a filosofia do cotidiano", "excerpt": "Uma biografia breve e o estilo de pensamento do autor.", "paragraphs": ["Filósofo, professor e escritor brasileiro, Mario Sergio Cortella tornou-se conhecido pela maneira de aproximar reflexão filosófica e situações comuns. Suas obras frequentemente abordam educação, ética, liderança e trabalho.", "O tom direto do autor convida o leitor a questionar hábitos e certezas sem precisar de formação prévia em filosofia."], "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5MDAgNTUwIj48cmVjdCB3aWR0aD0iOTAwIiBoZWlnaHQ9IjU1MCIgZmlsbD0iIzI0NTc2YSIvPjxwYXRoIGQ9Ik05NSA0NTBoNjkwIiBzdHJva2U9IiNjNmUyZGYiIHN0cm9rZS13aWR0aD0iNiIvPjxyZWN0IHg9IjE1OCIgeT0iMjYwIiB3aWR0aD0iODQiIGhlaWdodD0iMTkwIiByeD0iMTEiIGZpbGw9IiNlOGJmNDciLz48cmVjdCB4PSIzMTYiIHk9IjE5MCIgd2lkdGg9Ijg0IiBoZWlnaHQ9IjI2MCIgcng9IjExIiBmaWxsPSIjOWJjMmMwIi8+PHJlY3QgeD0iNDc0IiB5PSIxMjUiIHdpZHRoPSI4NCIgaGVpZ2h0PSIzMjUiIHJ4PSIxMSIgZmlsbD0iI2U4YmY0NyIvPjxyZWN0IHg9IjYzMiIgeT0iNzAiIHdpZHRoPSI4NCIgaGVpZ2h0PSIzODAiIHJ4PSIxMSIgZmlsbD0iIzliYzJjMCIvPjxwYXRoIGQ9Ik0xNTAgMTgwUTM1NSAxMTAgNTY1IDkyTDc0MCA1OCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZjFlYWQwIiBzdHJva2Utd2lkdGg9IjYiIHN0cm9rZS1kYXNoYXJyYXk9IjE0IDE1Ii8+PC9zdmc+", "read": "4 min de leitura"}, {"category": "Reflexão", "title": "Motivação, rotina e carreira: perguntas para você", "excerpt": "Um roteiro de reflexão inspirado nos assuntos da obra.", "paragraphs": ["Pense em uma atividade que você realiza todos os dias. Ela contribui para algum objetivo maior? O que você gostaria de aprender? Quais decisões você toma por escolha e quais se tornaram automáticas?", "Essas perguntas ajudam a transformar a leitura em uma oportunidade concreta de autoconhecimento."], "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5MDAgNTUwIj48cmVjdCB3aWR0aD0iOTAwIiBoZWlnaHQ9IjU1MCIgZmlsbD0iIzExMmMzZCIvPjxjaXJjbGUgY3g9IjQ2MCIgY3k9IjI3NSIgcj0iMTg1IiBmaWxsPSJub25lIiBzdHJva2U9IiNmMGNhNTUiIHN0cm9rZS13aWR0aD0iOCIvPjxjaXJjbGUgY3g9IjQ2MCIgY3k9IjI3NSIgcj0iMTU1IiBmaWxsPSJub25lIiBzdHJva2U9IiNhNmM2Y2YiIHN0cm9rZS13aWR0aD0iMyIvPjxwYXRoIGQ9Ik00NjAgMjc1TDQ2MCAxNDBNNDYwIDI3NUw1NzAgMzQwIiBzdHJva2U9IiNmMGNhNTUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxMSIvPjxnIGZpbGw9IiNmMGNhNTUiPjxjaXJjbGUgY3g9IjQ2MCIgY3k9IjI3NSIgcj0iMTYiLz48Y2lyY2xlIGN4PSI0NjAiIGN5PSIxMTgiIHI9IjkiLz48Y2lyY2xlIGN4PSI0NjAiIGN5PSI0MzIiIHI9IjkiLz48Y2lyY2xlIGN4PSIzMDMiIGN5PSIyNzUiIHI9IjkiLz48Y2lyY2xlIGN4PSI2MTciIGN5PSIyNzUiIHI9IjkiLz48L2c+PC9zdmc+", "read": "4 min de leitura"}], [{"category": "A obra", "title": "Quando a poesia encontra o zen", "excerpt": "Como duas linguagens diferentes conversam sobre a vida.", "paragraphs": ["A monja e o poeta aproxima a linguagem sensível dos poemas de Allan Dias Castro das reflexões de Monja Coen. Os textos tratam de experiências humanas como medo, amor, perdão e gratidão.", "O encontro entre as duas vozes propõe uma leitura sem pressa, em que cada sentimento pode ser observado por perspectivas complementares."], "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5MDAgNTUwIj48cmVjdCB3aWR0aD0iOTAwIiBoZWlnaHQ9IjU1MCIgZmlsbD0iI2M4ZDhjNSIvPjxjaXJjbGUgY3g9IjQ2MCIgY3k9IjI2OCIgcj0iMTc4IiBmaWxsPSJub25lIiBzdHJva2U9IiM2MzdlNjkiIHN0cm9rZS13aWR0aD0iMTUiIG9wYWNpdHk9Ii43Ii8+PGNpcmNsZSBjeD0iNDYwIiBjeT0iMjY4IiByPSIxMjYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzYzN2U2OSIgc3Ryb2tlLXdpZHRoPSIzIiBvcGFjaXR5PSIuMzUiLz48cGF0aCBkPSJNMCA0NTBxMjI1LTgwIDQ1MCAwdDQ1MCAwIiBmaWxsPSJub25lIiBzdHJva2U9IiM3MDhkNzciIHN0cm9rZS13aWR0aD0iOCIgb3BhY2l0eT0iLjQiLz48ZyBmaWxsPSIjNzE4Yjc0Ij48ZWxsaXBzZSBjeD0iMTk4IiBjeT0iMTg1IiByeD0iMjQiIHJ5PSI3MCIgdHJhbnNmb3JtPSJyb3RhdGUoLTM1IDE5OCAxODUpIi8+PGVsbGlwc2UgY3g9IjI2MiIgY3k9IjExNSIgcng9IjE4IiByeT0iNTIiIHRyYW5zZm9ybT0icm90YXRlKDM1IDI2MiAxMTUpIi8+PGVsbGlwc2UgY3g9IjcwMCIgY3k9IjM4MiIgcng9IjI0IiByeT0iNzAiIHRyYW5zZm9ybT0icm90YXRlKDM0IDcwMCAzODIpIi8+PC9nPjwvc3ZnPg==", "read": "4 min de leitura"}, {"category": "Os autores", "title": "Allan Dias Castro e Monja Coen: duas trajetórias", "excerpt": "Conheça os autores e o encontro entre poesia e ensinamentos zen.", "paragraphs": ["Allan Dias Castro atua com poesia e composição, aproximando o verso de vivências do cotidiano. Monja Coen é escritora e monja zen-budista brasileira, conhecida por divulgar práticas e reflexões ligadas à atenção e ao autoconhecimento.", "O contraste entre seus repertórios é parte do interesse da obra: uma conversa entre sensibilidade poética e contemplação."], "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5MDAgNTUwIj48cmVjdCB3aWR0aD0iOTAwIiBoZWlnaHQ9IjU1MCIgZmlsbD0iIzMxNGQ0MCIvPjxnIGZpbGw9IiNkYWU2ZDQiPjxwYXRoIGQ9Ik0xNDAgNDAwcTI1MC0xNTAgNDkwIDB0MTUwIDYwIiBvcGFjaXR5PSIuNSIvPjxwYXRoIGQ9Ik0xMjAgMzc1cTI1MC0xNTAgNDkwIDB0MTUwIDYwIiBvcGFjaXR5PSIuNDUiLz48cGF0aCBkPSJNMTUwIDQzMHEyNTAtMTUwIDQ5MCAwdDE1MCA2MCIgb3BhY2l0eT0iLjQ1Ii8+PC9nPjxjaXJjbGUgY3g9IjY1NSIgY3k9IjE3OCIgcj0iOTYiIGZpbGw9IiNlZWU5ZDIiIG9wYWNpdHk9Ii43Ii8+PGcgZmlsbD0iI2IyY2ZiMCI+PGVsbGlwc2UgY3g9IjIzMCIgY3k9IjE4MCIgcng9IjI1IiByeT0iNzciIHRyYW5zZm9ybT0icm90YXRlKC00NSAyMzAgMTgwKSIvPjxlbGxpcHNlIGN4PSIyNzAiIGN5PSIxNDIiIHJ4PSIxOCIgcnk9IjU2IiB0cmFuc2Zvcm09InJvdGF0ZSgyNSAyNzAgMTQyKSIvPjwvZz48L3N2Zz4=", "read": "4 min de leitura"}, {"category": "Reflexão", "title": "O valor de estar presente", "excerpt": "Uma pausa para pensar em atenção, silêncio e sentimentos.", "paragraphs": ["Em um cotidiano cheio de estímulos, reservar um momento de atenção pode mudar nossa maneira de escutar e perceber sentimentos. A leitura convida a observar as emoções sem pressa, reconhecendo que nem todas exigem respostas imediatas.", "Uma pergunta para levar consigo: o que muda quando você dedica atenção verdadeira ao momento presente?"], "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5MDAgNTUwIj48cmVjdCB3aWR0aD0iOTAwIiBoZWlnaHQ9IjU1MCIgZmlsbD0iI2UzZTdkYiIvPjxnIGZpbGw9IiM4ZmE5OTYiIG9wYWNpdHk9Ii43Ij48Y2lyY2xlIGN4PSIyNTUiIGN5PSIyOTAiIHI9Ijk4Ii8+PGNpcmNsZSBjeD0iMzY1IiBjeT0iMjkwIiByPSI5OCIvPjxjaXJjbGUgY3g9IjQ3NSIgY3k9IjI5MCIgcj0iOTgiLz48Y2lyY2xlIGN4PSI1ODUiIGN5PSIyOTAiIHI9Ijk4Ii8+PC9nPjxwYXRoIGQ9Ik0xOTAgMjkwcTE2MC0xNDAgMzIwIDB0MTYwIDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzM0NTk0MyIgc3Ryb2tlLXdpZHRoPSIxMSIvPjxwYXRoIGQ9Ik0yMDAgMzUwcTE3MCAxMDAgMzQwIDB0MTUwIDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZkZmJmMyIgc3Ryb2tlLXdpZHRoPSI4Ii8+PC9zdmc+", "read": "4 min de leitura"}]];
+const gabrielReading=[
+ {lead:'Minha leitura não ficou só no caminho de Fio Jasmim. O que sustenta o romance, para mim, é o modo como as relações mudam quando ouvimos também as mulheres que cruzam a vida dele.',title:'O protagonista não conta a história sozinho',main:'Fio Jasmim chama atenção, mas eu não acho que o livro peça para a gente olhar apenas para ele. As diferentes mulheres têm experiências e maneiras próprias de entender os encontros. Isso muda o centro da narrativa: em vez de transformar tudo numa aventura de um homem, a leitura abre espaço para perceber quem costuma ser deixado em segundo plano.',points:[['As outras vozes','Cada perspectiva acrescenta uma parte que o olhar de Fio, sozinho, não alcançaria.'],['Afeto e consequência','Relações não são só sentimentos: as escolhas também afetam outras pessoas.'],['Minha conclusão','Para mim, ouvir as mulheres é o que dá mais força e profundidade ao romance.']],detail:'A estrutura me fez prestar atenção em quem tem espaço para falar e em como a mesma relação pode ser lembrada de maneiras diferentes. Essa escolha combina com a escrita de Conceição Evaristo, que valoriza memória e experiência. Não terminei com uma resposta fechada sobre Fio; terminei pensando no contraste entre o que ele acredita viver e o que as outras pessoas realmente vivem ao lado dele.',end:'O livro me deixou com uma ideia clara: uma história muda bastante quando a gente escuta quem antes aparecia só como parte da vida de outra pessoa.',question:'Que parte da história ficaria diferente se fosse contada por outra personagem?'},
+ {lead:'Eu li o livro do Cortella como uma conversa sobre trabalho, mas a pergunta do título acabou chegando também às escolhas que faço fora dele.',title:'A pergunta é simples; a resposta não vem pronta',main:'O que funciona para mim é o livro não tratar propósito como uma frase bonita que resolve tudo. Ele provoca a pensar por que repetimos certas tarefas, o que esperamos do trabalho e como a rotina ocupa nosso tempo. Algumas ideias parecem diretas, mas continuam relevantes quando a gente compara com a própria experiência.',points:[['Rotina','Repetir uma tarefa não significa que a gente já pensou sobre o motivo dela.'],['Escolhas','O sentido também aparece nos objetivos que eu decido perseguir.'],['Minha conclusão','Não encontrei uma fórmula: encontrei perguntas para avaliar melhor minhas prioridades.']],detail:'O formato de reflexões curtas deixa a leitura fácil de retomar, e isso combina com o assunto: dá para parar e pensar em uma situação concreta do dia. Eu não concordo que todo trabalho precise ser uma grande paixão para ter valor. Para mim, a provocação mais interessante é perceber se entendo o que estou fazendo e se as escolhas que mantenho ainda fazem sentido.',end:'Saí da leitura menos interessado em achar uma resposta perfeita e mais atento aos motivos por trás das decisões que tomo.',question:'O que, na sua rotina, você mantém por escolha e o que continua só por hábito?'},
+ {lead:'Para mim, a força deste livro está no diálogo: o poema apresenta uma sensação, e a reflexão de Monja Coen abre outro caminho para olhar para ela.',title:'Duas vozes, sem uma resposta única',main:'Não li A monja e o poeta como um manual de respostas. Os poemas de Allan Dias Castro e os comentários de Monja Coen se alternam e criam uma pausa entre sentir e pensar. A estrutura ajuda a ler com calma, sem precisar concordar com tudo ou transformar cada ideia em regra.',points:[['O poema','A imagem e o sentimento vêm primeiro e deixam espaço para a interpretação.'],['A reflexão','A resposta amplia o assunto, mas não apaga o que cada leitor percebeu.'],['Minha conclusão','O diálogo entre os autores é mais interessante do que procurar uma lição única.']],detail:'Eu achei importante que o livro tenha duas vozes diferentes. O poema pode falar de uma experiência de forma mais aberta; depois, a reflexão traz a perspectiva de Monja Coen e dos ensinamentos zen. Para mim, essa diferença não é uma disputa para ver quem está certo. É justamente o que permite reler o mesmo tema por mais de um ângulo.',end:'O livro me lembrou que pensar com calma também é uma escolha: nem todo sentimento precisa de uma resposta imediata.',question:'Qual dos dois olhares mudou mais a maneira como você entendeu um tema do livro?'}
+];
 function renderSite(){
- const b=books[selected],t=themeExtras[b.theme],posts=editorialPosts[b.theme];
+ const b=books[selected],t=themeExtras[b.theme],posts=editorialPosts[b.theme],reading=gabrielReading[b.theme];
  const bioMarkup = b.bio.map(a=>{const photo=photoFor(a.name);return `<article class="bio-card">${photo?`<img src="${photo.src}" alt="Retrato de ${a.name}" loading="lazy">`:''}<div><span class="role">${a.tag}</span><h3>${a.name}</h3><p>${a.text}</p></div></article>`}).join('');
  document.title = `${b.title} — Blog de livros`;
  site.dataset.theme = b.theme;
@@ -574,67 +590,60 @@ function renderSite(){
      <div class="issue-main">
        <span class="issue-kicker">Blog de livros · edição ${String(selected+1).padStart(2,'0')}</span>
        <h1 class="issue-title">${b.title}</h1>
-       <p class="issue-intro">${b.summary}</p>
+       <p class="issue-intro">${reading.lead}</p>
        <div class="hero-chips">${t.chips.map(ch=>`<span>${ch}</span>`).join('')}</div>
        <div class="issue-meta"><span>${b.author}</span><span>${b.year}</span><span>${b.label}</span></div>
      </div>
      <div class="issue-side">
-        <div class="cover-shell"><div class="magazine-cover">${cover(b,selected)}</div><div class="cover-caption">Uma porta para as vozes, ideias e perguntas que atravessam esta leitura.</div></div>
-         ${(()=>{const photo=photoFor(authorFromBook(b));return photo?`<figure class="author-portrait"><img src="${photo.src}" alt="Retrato de ${authorFromBook(b)}"><figcaption>${authorFromBook(b)}<small>${photo.credit}</small></figcaption></figure>`:''})()}
+        <div class="cover-shell"><div class="magazine-cover">${cover(b,selected)}</div><div class="cover-caption">O livro que estou comentando nesta edição.</div></div>
      </div>
    </section>
 
    <nav class="mini-nav" aria-label="Navegar pelo blog">
-     <a href="#artigos">Artigo principal</a>
-     <a href="#livro">Sobre o livro</a>
-     <a href="#biografia">Biografia</a>
-     <a href="#refletir">Reflexões</a>
+     <a href="#artigos">Minha leitura</a>
+     <a href="#imagens">Imagens</a>
+     <a href="#biografia">Autores</a>
+     <a href="#refletir">Conclusão</a>
    </nav>
 
    <section id="artigos" class="blog-grid">
      <article class="feature-shell">
        <div class="feature-visual">
-           <div class="feature-art" aria-hidden="true"></div>
          <div class="feature-copy">
-           <span class="issue-kicker">${posts[0].category}</span>
-           <h2>${posts[0].title}</h2>
-           <p>${posts[0].excerpt} ${posts[0].paragraphs[0]}</p>
-           <button class="read-btn post-open" data-post="0">Ler reportagem ↗</button>
+           <span class="issue-kicker">Meu ponto de vista</span>
+           <h2>${reading.title}</h2>
+           <p>${reading.main}</p>
          </div>
        </div>
      </article>
      <aside class="side-stack">
        <div class="fact-shell">
-         <h3 class="fact-title">Ficha rápida</h3>
-         <div class="fact-grid">
-           <div><strong>Livro</strong><span>${b.title}</span></div>
-           <div><strong>Autor</strong><span>${b.author}</span></div>
-           <div><strong>Edição</strong><span>${b.year}</span></div>
-           <div><strong>Foco</strong><span>${b.label}</span></div>
+         <h3 class="fact-title">O que eu observo</h3>
+         <div class="fact-grid reading-facts">
+           ${reading.points.map(point=>`<div><strong>${point[0]}</strong><span>${point[1]}</span></div>`).join('')}
          </div>
        </div>
      </aside>
    </section>
 
-    <section class="related-reading" aria-label="Outros artigos desta leitura">
-      <div class="related-reading-heading"><span class="issue-kicker">Mais leituras</span><h2>Outros olhares sobre a obra</h2></div>
-      <div class="related-reading-grid">${posts.slice(1,3).map((post,i)=>`<article class="related-post"><span class="issue-kicker">${post.category}</span><h3>${post.title}</h3><p>${post.excerpt}</p><button class="post-open" data-post="${i+1}">Abrir artigo ↗</button></article>`).join('')}</div>
+    <section class="related-reading" aria-label="Outros pontos da minha leitura">
+      <div class="related-reading-heading"><span class="issue-kicker">O que ficou da leitura</span><h2>Três ideias que eu levo comigo</h2></div>
+      <div class="related-reading-grid">${reading.points.map((point,i)=>`<article class="related-post"><span class="issue-kicker">0${i+1} · Minha leitura</span><h3>${point[0]}</h3><p>${point[1]}</p></article>`).join('')}</div>
     </section>
 
-     ${renderPhotoStory(b.theme,b)}
+     <div id="imagens">${renderPhotoStory(b.theme,b)}</div>
 
    <section id="livro" class="section-shell">
-     <span class="section-label">Sobre o livro</span>
-     <h2>Uma leitura mais clara, bonita e com identidade</h2>
+     <span class="section-label">Minha leitura</span>
+     <h2>O que eu entendi da obra</h2>
      <div class="text-aside">
        <div>
-         <p>${b.intro}</p>
-         <p>${b.discussion}</p>
-         <p>Ao longo da leitura, ganham destaque especialmente ${b.insights.map(x=>x[0].toLowerCase()).join(', ')}. Esses pontos ajudam a perceber como a obra conversa com experiências humanas concretas e com debates mais amplos.</p>
+         <p>${reading.lead}</p>
+         <p>${reading.detail}</p>
        </div>
        <aside class="theme-note">
-         <h3>${t.panelTitle}</h3>
-         <p>${t.panelText}</p>
+         <h3>Um ponto de partida</h3>
+         <p>${b.intro}</p>
          <div class="chips">${t.chips.map(ch=>`<span>${ch}</span>`).join('')}</div>
        </aside>
      </div>
@@ -647,11 +656,11 @@ function renderSite(){
    </section>
 
    <section id="refletir" class="section-shell">
-     <span class="section-label">Reflexões e curiosidades</span>
-     <h2>O que permanece depois da leitura?</h2>
+     <span class="section-label">Fechando a leitura</span>
+     <h2>O que eu levo deste livro?</h2>
      <div class="text-aside">
-       <div class="question-list">${b.questions.map(q=>`<article class="question-item"><h3>${q[0]}</h3><p>${q[1]}</p></article>`).join('')}</div>
-       <aside class="quote-shell"><blockquote>“${b.reflection}”</blockquote><span>Para pensar</span></aside>
+       <div class="question-list"><article class="question-item reading-conclusion"><h3>Minha conclusão</h3><p>${reading.end}</p></article></div>
+       <aside class="quote-shell"><blockquote>${reading.question}</blockquote><span>Uma pergunta para conversar</span></aside>
      </div>
    </section>
 
