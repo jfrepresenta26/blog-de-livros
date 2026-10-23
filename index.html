@@ -620,15 +620,15 @@ function renderSite(){
        <div class="fact-shell">
          <h3 class="fact-title">O que eu observo</h3>
          <div class="fact-grid reading-facts">
-           ${reading.points.map(point=>`<div><strong>${point[0]}</strong><span>${point[1]}</span></div>`).join('')}
+           <div><strong>${reading.points[0][0]}</strong><span>${reading.points[0][1]}</span></div>
          </div>
        </div>
      </aside>
    </section>
 
     <section class="related-reading" aria-label="Outros pontos da minha leitura">
-      <div class="related-reading-heading"><span class="issue-kicker">O que ficou da leitura</span><h2>Três ideias que eu levo comigo</h2></div>
-      <div class="related-reading-grid">${reading.points.map((point,i)=>`<article class="related-post"><span class="issue-kicker">0${i+1} · Minha leitura</span><h3>${point[0]}</h3><p>${point[1]}</p></article>`).join('')}</div>
+      <div class="related-reading-heading"><span class="issue-kicker">O que ficou da leitura</span><h2>Duas ideias que completam meu olhar</h2></div>
+      <div class="related-reading-grid">${reading.points.slice(1).map((point,i)=>`<article class="related-post"><span class="issue-kicker">0${i+2} · Minha leitura</span><h3>${point[0]}</h3><p>${point[1]}</p></article>`).join('')}</div>
     </section>
 
      <div id="imagens">${renderPhotoStory(b.theme,b)}</div>
@@ -638,7 +638,6 @@ function renderSite(){
      <h2>O que eu entendi da obra</h2>
      <div class="text-aside">
        <div>
-         <p>${reading.lead}</p>
          <p>${reading.detail}</p>
        </div>
        <aside class="theme-note">
