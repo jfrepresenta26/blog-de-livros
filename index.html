@@ -387,6 +387,7 @@ body,button,a,input,textarea,.brand,.eyebrow,.kicker,.pill,.small-btn,.top-label
 .related-reading .related-post{padding:18px 14px;border:1px solid color-mix(in srgb,var(--tone),transparent 78%);border-radius:8px;background:rgba(255,255,255,.62)}
 .related-reading .related-post p{max-width:none}
 .reading-conclusion{padding:22px!important}
+.bio-card{grid-template-columns:minmax(0,1fr)}
 @media(max-width:1020px){.related-reading-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:700px){.related-reading-grid{grid-template-columns:1fr}.related-reading .related-post{padding:16px 0;border:0;border-top:1px solid color-mix(in srgb,var(--tone),transparent 65%);border-radius:0;background:transparent}}
 
@@ -580,7 +581,7 @@ const gabrielReading=[
 ];
 function renderSite(){
  const b=books[selected],t=themeExtras[b.theme],posts=editorialPosts[b.theme],reading=gabrielReading[b.theme];
- const bioMarkup = b.bio.map(a=>{const photo=photoFor(a.name);return `<article class="bio-card">${photo?`<img src="${photo.src}" alt="Retrato de ${a.name}" loading="lazy">`:''}<div><span class="role">${a.tag}</span><h3>${a.name}</h3><p>${a.text}</p></div></article>`}).join('');
+ const bioMarkup = b.bio.map(a=>`<article class="bio-card"><div><span class="role">${a.tag}</span><h3>${a.name}</h3><p>${a.text}</p></div></article>`).join('');
  document.title = `${b.title} — Blog de livros`;
  site.dataset.theme = b.theme;
  site.innerHTML = `<div class="read-progress" id="progress"></div>
@@ -596,6 +597,7 @@ function renderSite(){
      </div>
      <div class="issue-side">
         <div class="cover-shell"><div class="magazine-cover">${cover(b,selected)}</div><div class="cover-caption">O livro que estou comentando nesta edição.</div></div>
+         ${(()=>{const photo=photoFor(authorFromBook(b));return photo?`<figure class="author-portrait"><img src="${photo.src}" alt="Retrato de ${authorFromBook(b)}"><figcaption>${authorFromBook(b)}<small>${photo.credit}</small></figcaption></figure>`:''})()}
      </div>
    </section>
 
@@ -650,7 +652,7 @@ function renderSite(){
 
    <section id="biografia" class="section-shell">
      <span class="section-label">Biografia</span>
-     <h2>Quem escreve este universo literário</h2>
+     <h2>Quem escreveu o livro</h2>
      <div class="bio-list">${bioMarkup}</div>
    </section>
 
