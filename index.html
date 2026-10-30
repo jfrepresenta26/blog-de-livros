@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#111416">
-<title>Blog de livros — Três livros, três universos</title>
+<title>Blog escolar do Gabriel — Três livros, três universos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -417,7 +417,7 @@ body,button,a,input,textarea,.brand,.eyebrow,.kicker,.pill,.small-btn,.top-label
 <noscript><div class="noscript">Para navegar pelos livros, abra este arquivo no Safari ou em outro navegador com JavaScript ativado.</div></noscript>
 <div class="flash" id="flash"></div>
 <section class="intro" id="intro" aria-label="Escolha o livro">
-<header class="topbar"><div class="brand"><span class="star">✳</span>Blog de livros</div><span class="top-label">Uma experiência literária</span></header>
+<header class="topbar"><div class="brand"><span class="star">✳</span>Blog escolar do Gabriel</div><span class="top-label">Uma experiência literária</span></header>
 <div class="intro-layout">
 <div class="eyebrow">Três livros · três universos</div>
 <h1 class="intro-title">Toda história começa com uma escolha.</h1>
@@ -566,7 +566,7 @@ function returnHome(){
  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
  flash.classList.add('show');
  setTimeout(()=>{
-   document.title='Blog de livros — Três livros, três universos';
+   document.title='Blog escolar do Gabriel — Três livros, três universos';
    site.classList.remove('show');site.innerHTML='';
    intro.style.display='grid';intro.classList.remove('entrance','returning');
    paint();void intro.offsetWidth;intro.classList.add('returning');
@@ -584,14 +584,14 @@ const gabrielReading=[
 function renderSite(){
  const b=books[selected],t=themeExtras[b.theme],posts=editorialPosts[b.theme],reading=gabrielReading[b.theme];
  const bioMarkup = b.bio.map(a=>`<article class="bio-card"><div><span class="role">${a.tag}</span><h3>${a.name}</h3><p>${a.text}</p></div></article>`).join('');
- document.title = `${b.title} — Blog de livros`;
+ document.title = `${b.title} — Blog escolar do Gabriel`;
  site.dataset.theme = b.theme;
  site.innerHTML = `<div class="read-progress" id="progress"></div>
- <header class="site-header"><div class="brand"><span class="star">✳</span>Blog de livros</div><nav class="header-right"><button class="small-btn" id="backTop">← Escolher livro</button></nav></header>
+ <header class="site-header"><div class="brand"><span class="star">✳</span>Blog escolar do Gabriel</div><nav class="header-right"><button class="small-btn" id="backTop">← Escolher livro</button></nav></header>
  <main class="magazine refined">
    <section class="issue-hero">
      <div class="issue-main">
-       <span class="issue-kicker">Blog de livros · edição ${String(selected+1).padStart(2,'0')}</span>
+       <span class="issue-kicker">Blog escolar do Gabriel · edição ${String(selected+1).padStart(2,'0')}</span>
        <h1 class="issue-title">${b.title}</h1>
        <p class="issue-intro">${reading.lead}</p>
        <div class="hero-chips">${t.chips.map(ch=>`<span>${ch}</span>`).join('')}</div>
@@ -667,7 +667,7 @@ function renderSite(){
      </div>
    </section>
 
-   <footer class="footer-row"><span>✳ Blog de livros · três livros, três universos</span><a href="${b.source}" target="_blank" rel="noopener noreferrer">Informações da editora ↗</a></footer>
+   <footer class="footer-row"><span>✳ Blog escolar do Gabriel · três livros, três universos</span><a href="${b.source}" target="_blank" rel="noopener noreferrer">Informações da editora ↗</a></footer>
  </main>
  <div class="article-layer" id="articleLayer" hidden><div class="article-backdrop" id="articleBackdrop"></div><article class="article-paper" role="dialog" aria-modal="true" aria-labelledby="articleTitle"><button class="article-close" id="articleClose" aria-label="Fechar artigo">✕ Fechar</button><div id="articleContent"></div></article></div>`;
  document.getElementById('backTop').onclick = returnHome;
