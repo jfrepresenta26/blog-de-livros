@@ -397,8 +397,31 @@ body,button,a,input,textarea,.brand,.eyebrow,.kicker,.pill,.small-btn,.top-label
 @media(max-width:700px){.related-reading-grid{grid-template-columns:1fr}.related-reading .related-post{padding:16px 0;border:0;border-top:1px solid color-mix(in srgb,var(--tone),transparent 65%);border-radius:0;background:transparent}}
 
 </style>
-</head>
-<body>
+<style>
+body.auth-locked #intro,body.auth-locked #site,body.auth-locked .flash{display:none!important}
+.login-gate{min-height:100svh;display:grid;place-items:center;padding:28px;background:radial-gradient(ellipse at 50% 5%,#59402f 0%,#191a1c 58%,#111315 100%);color:#f7f1e8}
+.login-card{width:min(100%,430px);padding:clamp(26px,6vw,42px);border:1px solid #ffffff24;border-radius:22px;background:#ffffff0a;box-shadow:0 24px 70px #0005;backdrop-filter:blur(18px)}
+.login-flower{display:grid;place-items:center;width:48px;height:48px;margin-bottom:19px;border:1px solid #d5aa72;border-radius:50%;color:#d5aa72;font-size:25px}.login-kicker{color:#d9b987;font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase}.login-card h1{margin:11px 0;color:#f8f0e4;font:clamp(31px,8vw,43px)/1.04 'Playfair Display',Georgia,serif}.login-card>p{color:#c7c0b6;font-size:14px;line-height:1.7}.login-card form{display:grid;gap:9px;margin-top:24px}.login-card label{margin-top:8px;color:#e8ddcb;font-size:12px;font-weight:700}.login-card input{width:100%;padding:13px 14px;border:1px solid #ffffff35;border-radius:10px;background:#121416;color:#fff;font:inherit}.login-card input:focus{outline:2px solid #d5aa72;outline-offset:2px}.login-error{min-height:20px;margin:3px 0;color:#ffc2bd;font-size:12px;line-height:1.5}.login-submit{display:flex;justify-content:space-between;align-items:center;margin-top:5px;padding:14px 17px;border:0;border-radius:50px;background:#d2a76c;color:#1d1b19;font-weight:800;cursor:pointer}.login-submit:disabled{opacity:.65;cursor:wait}.login-setup-link{display:inline-block;margin-top:21px;color:#d9c29f;font-size:12px;text-decoration:underline;text-underline-offset:3px}.account-actions{display:flex;align-items:center;gap:10px}.login-manage-link{color:#f1e3cd;font-size:12px;font-weight:700;text-decoration:none}.login-logout{color:#fff!important;border-color:#ffffff60!important}
+@media(max-width:600px){.login-gate{padding:18px}.login-card{padding:25px 20px}.account-actions{gap:7px}.login-manage-link{font-size:10px}}
+</style></head>
+<body class="auth-locked">
+<section class="login-gate" id="loginGate" aria-labelledby="loginTitle">
+  <div class="login-card">
+    <span class="login-flower" aria-hidden="true">✳</span>
+    <span class="login-kicker">Blog escolar do Gabriel</span>
+    <h1 id="loginTitle">Entre no seu cantinho de leitura</h1>
+    <p>Use o e-mail e a senha da sua conta para abrir o blog associado a ela.</p>
+    <form id="loginForm" autocomplete="on">
+      <label for="loginEmail">E-mail</label>
+      <input id="loginEmail" name="email" type="email" autocomplete="username" required maxlength="254" placeholder="seu@email.com">
+      <label for="loginPassword">Senha</label>
+      <input id="loginPassword" name="password" type="password" autocomplete="current-password" required maxlength="128" placeholder="Sua senha">
+      <p class="login-error" id="loginMessage" role="status" aria-live="polite"></p>
+      <button class="login-submit" id="loginSubmit" type="submit">Entrar no blog <span aria-hidden="true">↗</span></button>
+    </form>
+    <a class="login-setup-link" href="/setup.html">Configurar a primeira conta</a>
+  </div>
+</section>
 <style>.intro.entrance .creator-credit{animation:uiFade .35s ease forwards}/* Melhor enquadramento para autoria, reportagem e respostas de leitura. */
 .intro-layout{gap:5px}
 .creator-credit{position:relative;z-index:4;margin-bottom:8px!important}
@@ -717,5 +740,82 @@ function toast(msg){const el=document.getElementById('toast');el.textContent=msg
   },{passive:true});
 })();
 
+</script>
+<script>
+(() => {
+  const gate = document.getElementById('loginGate');
+  const form = document.getElementById('loginForm');
+  const message = document.getElementById('loginMessage');
+  const submit = document.getElementById('loginSubmit');
+  const intro = document.getElementById('intro');
+  const setMessage = (text) => { message.textContent = text || ''; };
+
+  function enterFor(user) {
+    if (user.blogId === 'debora') {
+      window.location.replace('https://blog-da-debora.pages.dev/');
+      return;
+    }
+    document.body.classList.remove('auth-locked');
+    gate.hidden = true;
+    intro.style.display = 'grid';
+    const topbar = intro.querySelector('.topbar');
+    if (topbar && !topbar.querySelector('.account-actions')) {
+      const actions = document.createElement('div');
+      actions.className = 'account-actions';
+      if (user.role === 'owner') {
+        const manage = document.createElement('a');
+        manage.href = '/accounts.html';
+        manage.className = 'login-manage-link';
+        manage.textContent = 'Contas';
+        actions.append(manage);
+      }
+      const logout = document.createElement('button');
+      logout.type = 'button';
+      logout.className = 'small-btn login-logout';
+      logout.textContent = 'Sair';
+      logout.addEventListener('click', async () => {
+        await fetch('/api/auth/logout', { method: 'POST' });
+        window.location.reload();
+      });
+      actions.append(logout);
+      topbar.append(actions);
+    }
+  }
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!form.reportValidity()) return;
+    submit.disabled = true;
+    submit.textContent = 'Entrando…';
+    setMessage('');
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: document.getElementById('loginEmail').value.trim(), password: document.getElementById('loginPassword').value }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Não foi possível entrar.');
+      enterFor(result.user);
+    } catch (error) {
+      setMessage(error.message === 'Failed to fetch' ? 'Não consegui acessar o banco do blog. Confira a conexão do Cloudflare.' : error.message);
+    } finally {
+      submit.disabled = false;
+      submit.innerHTML = 'Entrar no blog <span aria-hidden="true">↗</span>';
+    }
+  });
+
+  fetch('/api/auth/me', { cache: 'no-store' }).then(async (response) => {
+    if (!response.ok) {
+      if (response.status === 503) {
+        const result = await response.json().catch(() => ({}));
+        setMessage(result.error || 'O banco ainda precisa ser conectado ao site.');
+      }
+      return;
+    }
+    const result = await response.json();
+    if (result.user) enterFor(result.user);
+  }).catch(() => setMessage('O banco do blog ainda não está conectado ao site.'));
+})();
 </script>
 </body></html>

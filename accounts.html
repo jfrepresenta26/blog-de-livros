@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#191a1c">
+  <title>Contas · Blog escolar do Gabriel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}body{min-height:100svh;margin:0;padding:24px;background:radial-gradient(ellipse at 50% 5%,#59402f 0%,#191a1c 58%,#111315 100%);color:#f7f1e8;font-family:'DM Sans',sans-serif}.wrap{width:min(100%,800px);margin:5vh auto;padding:clamp(22px,5vw,42px);border:1px solid #ffffff24;border-radius:22px;background:#ffffff0a;box-shadow:0 24px 70px #0005}.kicker{color:#d9b987;font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase}h1{margin:12px 0;color:#f8f0e4;font:clamp(30px,7vw,44px)/1.05 'Playfair Display',Georgia,serif}p{color:#c7c0b6;font-size:13px;line-height:1.7}form{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin:23px 0}label{display:grid;gap:7px;color:#e8ddcb;font-size:12px;font-weight:700}input,select{width:100%;padding:12px;border:1px solid #ffffff35;border-radius:10px;background:#121416;color:#fff;font:inherit}button,.back{display:inline-flex;align-items:center;justify-content:center;padding:12px 16px;border:0;border-radius:50px;background:#d2a76c;color:#1d1b19;font-weight:800;text-decoration:none;cursor:pointer}button:disabled{opacity:.65}.message{min-height:22px;color:#ffc2bd;font-size:12px}table{width:100%;border-collapse:collapse;margin:18px 0 26px;font-size:13px}th,td{padding:11px 8px;border-bottom:1px solid #ffffff20;text-align:left}th{color:#d9b987;font-size:10px;letter-spacing:.1em;text-transform:uppercase}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:18px 0}.back{background:transparent;color:#f1e3cd;border:1px solid #ffffff44}.note{color:#c7c0b6;font-size:12px}.span2{grid-column:1/-1}@media(max-width:600px){body{padding:12px}.wrap{margin:2vh auto;padding:22px 16px}form{grid-template-columns:1fr}table{font-size:11px}th,td{padding:9px 5px}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <span class="kicker">Administração · acesso restrito</span>
+    <h1>Contas do blog</h1>
+    <p>Crie contas por convite, definindo o e-mail, a senha inicial e qual blog cada conta abre. As senhas são armazenadas como hashes.</p>
+    <div class="toolbar"><span id="ownerEmail" class="note"></span><a class="back" href="/">Voltar à entrada</a></div>
+    <p class="message" id="message" role="status" aria-live="polite"></p>
+    <table><thead><tr><th>E-mail</th><th>Blog</th><th>Tipo</th></tr></thead><tbody id="accounts"></tbody></table>
+    <h2>Convidar uma conta</h2>
+    <form id="accountForm">
+      <label>E-mail<input name="email" type="email" autocomplete="off" maxlength="254" required></label>
+      <label>Senha inicial<input name="password" type="password" autocomplete="new-password" minlength="12" maxlength="128" required></label>
+      <label class="span2">Blog desta conta<select name="blogId" required><option value="gabriel">Blog escolar do Gabriel</option><option value="debora">Blog da Debora</option></select></label>
+      <button class="span2" type="submit" id="submit">Criar conta ↗</button>
+    </form>
+  </main>
+  <script>
+    const message=document.getElementById('message'),tbody=document.getElementById('accounts'),form=document.getElementById('accountForm'),submit=document.getElementById('submit');
+    async function loadAccounts(){const me=await fetch('/api/auth/me',{cache:'no-store'});if(!me.ok){location.replace('/');return}const mine=await me.json();if(mine.user?.role!=='owner'){location.replace('/');return}document.getElementById('ownerEmail').textContent='Conectado como '+mine.user.email;const response=await fetch('/api/admin/accounts',{cache:'no-store'});const data=await response.json();if(!response.ok)throw new Error(data.error||'Não foi possível carregar as contas.');tbody.replaceChildren(...data.accounts.map(account=>{const tr=document.createElement('tr');for(const value of [account.email,account.blog_id==='debora'?'Blog da Debora':'Blog do Gabriel',account.role==='owner'?'Administradora':'Conta']){const td=document.createElement('td');td.textContent=value;tr.append(td)}return tr}))}
+    loadAccounts().catch(error=>message.textContent=error.message);
+    form.addEventListener('submit',async e=>{e.preventDefault();if(!form.reportValidity())return;submit.disabled=true;message.textContent='Criando conta…';try{const response=await fetch('/api/admin/accounts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:form.email.value.trim(),password:form.password.value,blogId:form.blogId.value})});const data=await response.json();if(!response.ok)throw new Error(data.error||'Não foi possível criar a conta.');form.reset();message.textContent='Conta criada. Compartilhe os dados de acesso com a pessoa por um canal privado.';await loadAccounts()}catch(error){message.textContent=error.message}finally{submit.disabled=false}});
+  </script>
+</body>
+</html>
