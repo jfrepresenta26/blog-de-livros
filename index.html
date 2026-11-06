@@ -776,6 +776,7 @@ function toast(msg){const el=document.getElementById('toast');el.textContent=msg
     });
     document.body.classList.toggle('local-editing', editMode);
   }
+  window.applyLocalEdits = applyLocalEdits;
   function saveText(el) {
     const root = el.closest('#intro,#site');
     if (!root) return;
